@@ -1,9 +1,10 @@
 import './App.css';
+import Wordle from './Wordle';
 
 function App() {
   return (
     <div className="App">
-      <h6>WORDLE</h6>
+      <Wordle />
     </div>
   );
 }
