@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Wordle.css';
+import OnScreenKeyboard from './OnScreenKeyboard';
+import { FaRedo } from 'react-icons/fa';
 
 const Wordle = () => {
-  const [words, setWords] = useState([]);
+  const [words, setWords] = useState([]); 
   const [word, setWord] = useState('');
   const [attempts, setAttempts] = useState(5);
   const [message, setMessage] = useState('');
@@ -82,7 +84,9 @@ const Wordle = () => {
 
   const handleKeyDown = (row, col, e) => {
     if(gameOver) return;
-    if (e.key === 'Backspace' && !grid[row][col] && col > 0) {
+    if (e.key === 'Enter') {
+      handleSubmit(e);
+    } else if (e.key === 'Backspace' && !grid[row][col] && col > 0) {
       const newGrid = [...grid];
       newGrid[row][col - 1] = '';
       setGrid(newGrid);
@@ -163,11 +167,26 @@ const Wordle = () => {
     setCurrentCol(0);
   };
 
+  const handleKeyClick = (key) => {
+    if (gameOver) return;
+    if (key === 'Backspace') {
+      handleKeyDown(currentRow, currentCol, { key: 'Backspace' });
+    } else if (key === 'Enter') {
+      handleSubmit({ preventDefault: () => {} });
+    } else {
+      handleChange(currentRow, currentCol, key);
+      if (currentCol < 4) {
+        setCurrentCol(currentCol + 1);}
+    }
+  };
 
   return (
     
     <div className="wordle">
-      <h1>Wordle</h1>
+      <div className="header">
+        <h1>Wordle</h1>
+        <FaRedo className="reset-icon" onClick={handleReset} title="Reset Game" />
+      </div>
       {(lost || won) && <Message msg={message} />}
       {errorMessage && <ErrorMessage message={errorMessage} />}
       <form onSubmit={handleSubmit}>
@@ -191,13 +210,8 @@ const Wordle = () => {
             </div>
           ))}
         </div>
-        <div className="buttons">
-          <button type="submit">
-            Submit
-          </button>
-          <button type="button" onClick={handleReset}>Reset</button>
-        </div>
       </form>
+      <OnScreenKeyboard onKeyClick={handleKeyClick} />
     </div>
   );
 };

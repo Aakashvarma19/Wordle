@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap'); 
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px; 
+}
+
+.keyboard-key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 60px; 
+  margin: 3px; 
+  font-size: 18px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+}
+
+.keyboard-key:hover {
+  background-color: #e0e0e0;
+}
+
+.special-key {
+  width: 80px;
+}
