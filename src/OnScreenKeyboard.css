@@ -31,6 +31,21 @@
   font-weight: bold;
 }
 
+.keyboard-key.green {
+  background-color: green;
+  color: #fff;
+}
+
+.keyboard-key.yellow {
+  background-color: yellow;
+  color: #fff;
+}
+
+.keyboard-key.darkgrey {
+  background-color: darkgrey;
+  color: #fff;
+}
+
 .keyboard-key:hover {
   background-color: #e0e0e0;
 }

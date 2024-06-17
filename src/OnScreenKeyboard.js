@@ -2,7 +2,7 @@ import React from 'react';
 import './OnScreenKeyboard.css';
 import { FaBackspace } from 'react-icons/fa';
 
-const OnScreenKeyboard = ({ onKeyClick }) => {
+const OnScreenKeyboard = ({ onKeyClick, keyColors }) => {
   const keys = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -16,7 +16,7 @@ const OnScreenKeyboard = ({ onKeyClick }) => {
           {row.map((key) => (
             <button
               key={key}
-              className="keyboard-key"
+              className={`keyboard-key ${keyColors[key]}`}
               onClick={() => onKeyClick(key)}
             >
               {key}

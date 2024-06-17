@@ -10,6 +10,7 @@ const Wordle = () => {
   const [message, setMessage] = useState('');
   const [grid, setGrid] = useState(Array(5).fill('').map(() => Array(5).fill('')));
   const [colors, setColors] = useState(Array(5).fill('').map(() => Array(5).fill('')));
+  const [keyColors,setKeyColors]=useState({});
   const inputRefs = useRef(Array.from({ length: 5 }, () => Array(5).fill(null)));
   const [currentRow, setCurrentRow] = useState(0);
   const [currentCol, setCurrentCol] = useState(0);
@@ -63,6 +64,7 @@ const Wordle = () => {
     setGrid(newGrid);
     if (value && col < 4) {
       inputRefs.current[row][col + 1].focus();
+      setCurrentCol(currentCol+1);
     }
   };
 
@@ -86,12 +88,23 @@ const Wordle = () => {
     if(gameOver) return;
     if (e.key === 'Enter') {
       handleSubmit(e);
-    } else if (e.key === 'Backspace' && !grid[row][col] && col > 0) {
-      const newGrid = [...grid];
-      newGrid[row][col - 1] = '';
-      setGrid(newGrid);
-      inputRefs.current[row][col - 1].focus();
+    } else if (e.key === 'Backspace') {
+      handleBackspace(row, col);
   }
+  };
+
+  const handleBackspace = (row, col) => {
+    const newGrid = [...grid];
+    if (col > 0 || (col === 0 && newGrid[row][col] !== '')) {
+      if (col === 0 && newGrid[row][col] !== '') {
+        newGrid[row][col] = '';
+      } else {
+        newGrid[row][col] = '';
+        setCurrentCol(col - 1);
+        inputRefs.current[row][col - 1].focus();
+      }
+      setGrid(newGrid);
+    }
   };
   
 
@@ -102,10 +115,15 @@ const Wordle = () => {
       setErrorMessage(true);
       return;
     }
+    const newKeyColors = { ...keyColors };
     if (input === word) {
         const newColors = [...colors];
         newColors[currentRow] = newColors[currentRow].map(() => 'green');
         setColors(newColors);
+        input.split('').forEach(letter => {
+          newKeyColors[letter] = 'green';
+        });
+        setKeyColors(newKeyColors);
         setMessage('Great!');
         setWon(true);
         setgameOver(true);
@@ -122,6 +140,7 @@ const Wordle = () => {
         newColors[currentRow][i] = 'green';
         matchedIndices.push(i);
         letterCount[grid[currentRow][i]]--;
+        newKeyColors[grid[currentRow][i]] = 'green';
       }
     }
     
@@ -131,12 +150,19 @@ const Wordle = () => {
         if (word.includes(guessedLetter) && letterCount[guessedLetter] > 0) {
           newColors[currentRow][i] = 'yellow';
           letterCount[guessedLetter]--;
+          if (newKeyColors[guessedLetter] !== 'green') {
+            newKeyColors[guessedLetter] = 'yellow';
+          }
         } else {
           newColors[currentRow][i] = 'darkgrey';
+          if (newKeyColors[guessedLetter] !== 'green' && newKeyColors[guessedLetter] !== 'yellow') {
+            newKeyColors[guessedLetter] = 'darkgrey';
+          }
         }
       }
     }
     setColors(newColors);
+    setKeyColors(newKeyColors);
     const newAttempts = attempts - 1;
     setAttempts(newAttempts);
     if (newAttempts === 0) {
@@ -155,6 +181,7 @@ const Wordle = () => {
   const handleReset = () => {
     setGrid(Array(5).fill('').map(() => Array(5).fill('')));
     setColors(Array(5).fill('').map(() => Array(5).fill('')));
+    setKeyColors({});
     setMessage('');
     setgameOver(false);
     setAttempts(5);
@@ -170,7 +197,7 @@ const Wordle = () => {
   const handleKeyClick = (key) => {
     if (gameOver) return;
     if (key === 'Backspace') {
-      handleKeyDown(currentRow, currentCol, { key: 'Backspace' });
+      handleBackspace(currentRow, currentCol);
     } else if (key === 'Enter') {
       handleSubmit({ preventDefault: () => {} });
     } else {
@@ -211,7 +238,7 @@ const Wordle = () => {
           ))}
         </div>
       </form>
-      <OnScreenKeyboard onKeyClick={handleKeyClick} />
+      <OnScreenKeyboard onKeyClick={handleKeyClick} keyColors={keyColors} />
     </div>
   );
 };
